@@ -1,0 +1,11 @@
+# Usando uma imagem do Nginx para servir os arquivos estáticos
+FROM nginx:alpine
+
+# Copia os arquivos do frontend para o diretório correto do Nginx
+COPY ./ /usr/share/nginx/html
+
+# Expõe a porta 80 para o Nginx (mantenha como 80 porque é a porta padrão do Nginx)
+EXPOSE 80
+
+# O Nginx já está configurado para servir arquivos estáticos na porta 80
+CMD ["nginx", "-g", "daemon off;"]

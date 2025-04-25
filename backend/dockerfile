@@ -1,0 +1,32 @@
+# Use a imagem Golang para a construção do backend
+FROM golang:1.23-alpine as builder
+
+# Defina o diretório de trabalho no container
+WORKDIR /app
+
+# Copie os arquivos go.mod e go.sum
+COPY go.mod go.sum ./
+
+# Baixe as dependências
+RUN go mod tidy
+
+# Copie o restante do código para dentro do container
+COPY . .
+
+# Compile o código Go
+RUN go build -o main .
+
+# Use uma imagem base para rodar o backend
+FROM alpine:latest
+
+# Instale as dependências necessárias
+RUN apk --no-cache add ca-certificates
+
+# Copie o binário compilado do primeiro estágio para o container final
+COPY --from=builder /app/main /usr/local/bin/main
+
+# Exponha a porta 8080
+EXPOSE 8080
+
+# Defina o comando para iniciar o servidor
+CMD ["/usr/local/bin/main"]
